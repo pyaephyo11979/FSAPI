@@ -58,6 +58,9 @@ const createUser= async (req,res)=>{
             phone,
             birthDay,
         });
+        const otp= Math.floor(100000 + Math.random() * 900000);
+        const userWithOtp= await User.findByIdAndUpdate(user._id, {otp}, {new: true});
+        
         res.status(201).json({
             success: true,
             message: "User created successfully",
@@ -71,7 +74,7 @@ const createUser= async (req,res)=>{
         });
     }
 }
-const LoginUser= async (req, res) => {
+const Login= async (req, res) => {
     try{
         const {email, password}= req.body;
         const user=await User.findOne({email});
@@ -193,7 +196,7 @@ module.exports= {
     getUsers,
     getUser,
     createUser,
-    LoginUser,
+    Login,
     updateUser,
     deleteUser,
     blockUser
