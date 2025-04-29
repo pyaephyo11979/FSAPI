@@ -7,11 +7,12 @@ const UserModel=mongoose.Schema({
     email:{
         type:String,
         required:true,
-        unique:true
+        unique:true,
+        match:[/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Please fill a valid email address']
     },
     password:{
         type:String,
-        required:true
+        required:true,
     },
     phone:{
         type:String,
@@ -20,31 +21,37 @@ const UserModel=mongoose.Schema({
     birthDay:{
         type:Date,
     },
-    billing:{
+    billingAddress:{
         address:{
             type:String,
         },
-        creditCardNumber:{
+        city:{
             type:String,
         },
-        creditCardExpiry:{
-            type:Date,
-        },
-        creditCardCVC:{
+        state:{
             type:String,
         },
-        creditCardName:{
+        country:{
             type:String,
-        }
+        },
+        zip:{
+            type:String,
+        },
     },
     wishlist:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Product"
     }],
-    cart:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Cart"
-    },
+    cart:[{
+        product_id:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"Product"
+        },
+        quantity:{
+            type:Number,
+            default:1
+        }
+    }],
     orders:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Order"
@@ -77,13 +84,5 @@ const UserModel=mongoose.Schema({
     profilePicture:{
         type:String,
     },
-    createdAt:{
-        type:Date,
-        default:Date.now
-    },
-    updatedAt:{
-        type:Date,
-        default:Date.now
-    }
-})
+},{timestamps:true})
 module.exports=mongoose.model("User",UserModel)

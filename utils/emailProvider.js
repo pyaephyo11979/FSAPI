@@ -21,4 +21,4 @@ const sendEmail = async (to,subject,text,html)=>{
         return err;
     }
 }
-module.exports = sendEmail;
+module.exports = {sendEmail};

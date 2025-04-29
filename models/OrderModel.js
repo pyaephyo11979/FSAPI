@@ -44,13 +44,18 @@ const OrderModel= mongoose.Schema({
     },
     paymentMethod:{
         type:String,
-        enum:["Credit Card", "PayPal", "Cash on Delivery"],
-        default:"Credit Card",
+        enum:["K-pay","Wave Pay","Aya pay", "Cash on Delivery"],
+        default:"K-pay",
     },
     orderStatus:{
         type:String,
         enum:["Pending", "Shipped", "Delivered", "Cancelled"],
         default:"Pending",
+    },
+    orderNumber:{
+        type:String,
+        unique:true,
+        required:true,
     },
 }, {
     timestamps:true

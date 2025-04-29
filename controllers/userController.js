@@ -1,6 +1,7 @@
 const User= require("../models/UserModel");
 const bcrypt= require("bcrypt");
 const jwt= require("jsonwebtoken");
+const {sendEmail}= require("../utils/emailProvider");
 
 const getUsers= async (req, res) => {
     try {
@@ -60,10 +61,51 @@ const createUser= async (req,res)=>{
         });
         const otp= Math.floor(100000 + Math.random() * 900000);
         const userWithOtp= await User.findByIdAndUpdate(user._id, {otp}, {new: true});
-        
+        const emailBody= `
+        <h1>Welcome to our platform</h1>
+        <p>Your OTP is ${otp}</p>
+        <p>Please verify your email address</p>
+        `;
+        sendEmail(email, "Verify your email", "OTP Verification", emailBody)
+        .then((info) => {
+            console.log("Email sent: ", info.response);
+        })
+        .catch((error) => {
+            console.error("Error sending email: ", error);
+        });
+        const token= jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: "1d"});
         res.status(201).json({
             success: true,
             message: "User created successfully",
+            user,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Server Error",
+            error: error.message,
+        });
+    }
+}
+const verifyEmail= async (req, res) => {
+    const {otp}= req.body;
+    try {
+        const user= await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+        if (user.otp !== otp) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid OTP",
+            });
+        }
+        res.status(200).json({
+            success: true,
+            message: "Email verified successfully",
             user,
         });
     } catch (error) {
@@ -196,6 +238,7 @@ module.exports= {
     getUsers,
     getUser,
     createUser,
+    verifyEmail,
     Login,
     updateUser,
     deleteUser,
