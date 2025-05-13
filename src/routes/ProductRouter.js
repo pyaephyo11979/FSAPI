@@ -1,4 +1,4 @@
-const ProductController = require('../controllers/ProductController');
+const ProductController = require('../controllers/productController')
 const ProductRouter = require('express').Router();
 const {checkAuth,isSeller,isAdmin} = require('../middleware/useAuth');
 
