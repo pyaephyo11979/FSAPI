@@ -1,19 +1,16 @@
-FROM node:22-alpine
+FROM node:22
 
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy dependency files first for better cache
 COPY package.json package-lock.json bun.lock jsconfig.json ./
-COPY src ./
-COPY .env ./
-COPY README.md .gitignore ./
 
+COPY /src/ ./
 
-WORKDIR /
-
-
-
+# Install dependencies
 RUN npm install
 
-CMD ["npm","start"]
 
-
-
-
+# Start the application
+CMD ["npm", "start"]
